@@ -3,9 +3,10 @@ package parsingv2
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/net/html"
 	"regexp"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 type TopicContentApp struct {
@@ -26,7 +27,8 @@ type TopicContentApp struct {
 }
 
 func (a *TopicContentApp) ToJson() string {
-	_j, _ := json.Marshal(a)
+	// _j, _ := json.Marshal(a)
+	_j, _ := json.MarshalIndent(a, "", "    ")
 	return string(_j)
 }
 
@@ -73,10 +75,12 @@ func (p *AppParser) NewTopicContentApp(t string, attId string) TopicContentApp {
 	return app
 }
 
-//var emojiRegex = regexp.MustCompile(`\[emoji\](\d+)\[/emoji\]`)
-//var doorRegex = regexp.MustCompile(`\[door\](\d+)\[/door\]`)
-//var bookRegex = regexp.MustCompile(`\[book\](\d+)\[/book\]`)
+// var emojiRegex = regexp.MustCompile(`\[emoji\](\d+)\[/emoji\]`)
+// var doorRegex = regexp.MustCompile(`\[door\](\d+)\[/door\]`)
+// var bookRegex = regexp.MustCompile(`\[book\](\d+)\[/book\]`)
 var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](\d+)\[\/(?:door|book|emoji|sell)\]`)
+
+// buat regex untuk [sell]
 
 func (p *AppParser) Render(input string) (apps []TopicContentApp) {
 	doc, err := html.Parse(strings.NewReader(input))
@@ -109,7 +113,26 @@ func (p *AppParser) Render(input string) (apps []TopicContentApp) {
 					text = c.Data
 					if !tagRegex.MatchString(text) {
 						// If there are no tags, add the entire text node
-						contentApps = p.parseParagraph(text, contentApps)
+						if strings.Contains(text, "[sell]") {
+							// openBracket := strings.Index(text, "[")
+							prefix := text[:6]
+							suffix := text[6:]
+							if strings.Contains(suffix, "[/sell]") {
+								suffix = strings.ReplaceAll(suffix, "[/sell]", "")
+								suffix2 := "[/sell]"
+								slice1 := []string{prefix, suffix, suffix2}
+								for _, i := range slice1 {
+									contentApps = p.parseParagraph(i, contentApps)
+								}
+							} else {
+								slice1 := []string{prefix, suffix}
+								for _, i := range slice1 {
+									contentApps = p.parseParagraph(i, contentApps)
+								}
+							}
+						} else {
+							contentApps = p.parseParagraph(text, contentApps)
+						}
 					} else {
 						locs := tagRegex.FindAllStringIndex(text, -1)
 						fmt.Printf("locs is %v\n", locs)
@@ -152,7 +175,6 @@ func (p *AppParser) parseCustomTags(content string, contentApps []TopicContentAp
 		openSell.IsSell = "1"
 		openSell.Text = "[sell]"
 		openSell.IsCensored = "1"
-		contentApps = append(contentApps, openSell)
 		p.IsSell = true
 		return contentApps
 	}
@@ -162,7 +184,6 @@ func (p *AppParser) parseCustomTags(content string, contentApps []TopicContentAp
 		closeSell.IsSell = "1"
 		closeSell.Text = "[/sell]"
 		closeSell.IsCensored = "1"
-		contentApps = append(contentApps, closeSell)
 		p.IsSell = false
 		return contentApps
 	}

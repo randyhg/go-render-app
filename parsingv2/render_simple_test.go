@@ -1,6 +1,8 @@
 package parsingv2
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestSingleImage(t *testing.T) {
 	input := `<html><head></head><body><p><p><br/></p></p><img src="./hello-world.jpg" data-id="46"></body></html>`
