@@ -148,34 +148,3 @@ func TestSellWithParagraphImgVidAndAudio(t *testing.T) {
 		}
 	}
 }
-
-// func TestSellWithParagraphEmojiImgDoorAndBook(t *testing.T) {
-// 	input := `<html><head></head><body><p>你好你好[emoji]020[/emoji]<p><br/></p></p><p><p><br/></p></p>[sell]<img src="" data-id="59">[door]444327[/door][book]256[/book][/sell]<p><p><br/></p></p>[door]444420[/door][book]257[/book]</body></html>`
-// 	got := startParsing(input)
-// 	if len(got) != 9 {
-// 		t.Errorf("got %v want %v", len(got), 9)
-// 	}
-
-// 	// expected
-// 	p := new(AppParser)
-// 	paragraph := p.NewTopicContentApp(contentType.Text(), "")
-// 	paragraph.Text = "你好你好"
-// 	emoji := p.NewTopicContentApp(contentType.Emoji(), "")
-// 	emoji.EmoId = "[emoji]020[/emoji]"
-// 	openSell := p.NewTopicContentApp(contentType.Text(), "")
-// 	openSell.Text = "[sell]"
-// 	img := p.NewTopicContentApp(contentType.Image(), "")
-// 	img.ImgUrl = ""
-// 	img.AttachmentsId = ""
-// 	vid := p.NewTopicContentApp(contentType.Video(), "")
-// 	vid.VideoUrl = """
-// 	vid.AttachmentsId = ""
-// 	audio := p.NewTopicContentApp(contentType.Audio(), "")
-// 	audio.AudioUrl = ""
-// 	audio.AttachmentsId = ""
-// 	door := p.NewTopicContentApp(contentType.Topic(), "")
-// 	door.TopicId = "[door]444327[/door]"
-// 	book := p.NewTopicContentApp(contentType.Book(), "")
-// 	book.BookId = "[book]256[/book]"
-// 	final := []TopicContentApp{paragraph, emoji, img, vid, audio, door, book}
-// }

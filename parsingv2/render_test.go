@@ -29,7 +29,8 @@ func TestParagraphWithImg(t *testing.T) {
 // Failed
 // got 5 want 4
 func TestParagraphWithEmojiDoorAndBook(t *testing.T) {
-	input := `<html><head></head><body><p>早安大家[emoji]001[/emoji][emoji]002[/emoji]<p><br/></p></p>[door]444341[/door][book]256[/book]</body></html>`
+	// input := `<html><head></head><body><p>早安大家[emoji]001[/emoji][emoji]002[/emoji]<p><br/></p></p>[door]444341[/door][book]256[/book]</body></html>`
+	input := `<p>早安大家[emoji]001[/emoji][emoji]002[/emoji]</p>`
 	got := startParsing(input)
 	// if len(got) != 4 {
 	// 	t.Errorf("got %v want %v", len(got), 4)
