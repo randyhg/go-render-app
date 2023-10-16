@@ -37,7 +37,7 @@ func TestSellWithParagraph(t *testing.T) {
 // Failed
 // got 5 want 6
 func TestSellWithParagraphAndImg(t *testing.T) {
-	input := `<p>下午好</p><p>[sell]大家今天吃点啥呢</p><p><img src="https://res.hjcaecf.top/hjstore/images/20230911/e1b4561c88df36d1e3caa23f5dc9e3fd.jpg.txt?Expires=1694489125&Signature=QUtZ72xPPyUPXiV0-9g2ltmtGczHRCYfysKjK6~gGxRknlhp5LVDtdkBNxEIoTb9XY6qyQqknYtUeeRNYBjnJ-uEiIefJsbqOJtxwLRySP1SqGFV8Sl~pneaHkC5gJXzZ2NH5GxF6JsNXyAN4VfqHJIMJj0ZM7zUxyiSilceqv6-vTs3ZACMYGXaxG4-N1SKcnh9yo97mCWd9SaMl2AVDjl2w2cEySijoqu5iPooUhJFfhC17WNWMN~eYjLE6j8kK6pb4YwHDc5K-7zE2EP2AzBo6lZb~r8WXl1Mb97XmgpFo1vN9QcZbiUtjfK694J8R9nD7aThjrJg-b35jFrY4A__&Key-Pair-Id=K3HEWB9S9B6R6N" data-id="227">[/sell]</p><p><img src="https://res.hjcaecf.top/hjstore/images/20230911/e1b4561c88df36d1e3caa23f5dc9e3fd.jpg.txt?Expires=1694489125&Signature=QUtZ72xPPyUPXiV0-9g2ltmtGczHRCYfysKjK6~gGxRknlhp5LVDtdkBNxEIoTb9XY6qyQqknYtUeeRNYBjnJ-uEiIefJsbqOJtxwLRySP1SqGFV8Sl~pneaHkC5gJXzZ2NH5GxF6JsNXyAN4VfqHJIMJj0ZM7zUxyiSilceqv6-vTs3ZACMYGXaxG4-N1SKcnh9yo97mCWd9SaMl2AVDjl2w2cEySijoqu5iPooUhJFfhC17WNWMN~eYjLE6j8kK6pb4YwHDc5K-7zE2EP2AzBo6lZb~r8WXl1Mb97XmgpFo1vN9QcZbiUtjfK694J8R9nD7aThjrJg-b35jFrY4A__&Key-Pair-Id=K3HEWB9S9B6R6N" data-id="227"></p>`
+	input := `<p>下午好</p><p>[sell]大家今天吃点啥呢</p><p><img src="gambar1.jpg" data-id="227">[/sell]</p><p><img src="gambar2.jpg" data-id="227"></p>`
 	got := startParsing(input)
 	if len(got) != 6 {
 		t.Errorf("got %v want %v", len(got), 6)
@@ -52,12 +52,12 @@ func TestSellWithParagraphAndImg(t *testing.T) {
 	paragraph2 := p.NewTopicContentApp(contentType.Text(), "")
 	paragraph2.Text = "大家今天吃点啥呢"
 	img1 := p.NewTopicContentApp(contentType.Image(), "")
-	img1.ImgUrl = "https://res.hjcaecf.top/hjstore/images/20230911/e1b4561c88df36d1e3caa23f5dc9e3fd.jpg.txt?Expires=1694489125&Signature=QUtZ72xPPyUPXiV0-9g2ltmtGczHRCYfysKjK6~gGxRknlhp5LVDtdkBNxEIoTb9XY6qyQqknYtUeeRNYBjnJ-uEiIefJsbqOJtxwLRySP1SqGFV8Sl~pneaHkC5gJXzZ2NH5GxF6JsNXyAN4VfqHJIMJj0ZM7zUxyiSilceqv6-vTs3ZACMYGXaxG4-N1SKcnh9yo97mCWd9SaMl2AVDjl2w2cEySijoqu5iPooUhJFfhC17WNWMN~eYjLE6j8kK6pb4YwHDc5K-7zE2EP2AzBo6lZb~r8WXl1Mb97XmgpFo1vN9QcZbiUtjfK694J8R9nD7aThjrJg-b35jFrY4A__&Key-Pair-Id=K3HEWB9S9B6R6N"
+	img1.ImgUrl = "gambar1.jpg"
 	img1.AttachmentsId = "227"
 	closeSell := p.NewTopicContentApp(contentType.Text(), "")
 	closeSell.Text = "[/sell]"
 	img2 := p.NewTopicContentApp(contentType.Image(), "")
-	img2.ImgUrl = "https://res.hjcaecf.top/hjstore/images/20230911/e1b4561c88df36d1e3caa23f5dc9e3fd.jpg.txt?Expires=1694489125&Signature=QUtZ72xPPyUPXiV0-9g2ltmtGczHRCYfysKjK6~gGxRknlhp5LVDtdkBNxEIoTb9XY6qyQqknYtUeeRNYBjnJ-uEiIefJsbqOJtxwLRySP1SqGFV8Sl~pneaHkC5gJXzZ2NH5GxF6JsNXyAN4VfqHJIMJj0ZM7zUxyiSilceqv6-vTs3ZACMYGXaxG4-N1SKcnh9yo97mCWd9SaMl2AVDjl2w2cEySijoqu5iPooUhJFfhC17WNWMN~eYjLE6j8kK6pb4YwHDc5K-7zE2EP2AzBo6lZb~r8WXl1Mb97XmgpFo1vN9QcZbiUtjfK694J8R9nD7aThjrJg-b35jFrY4A__&Key-Pair-Id=K3HEWB9S9B6R6N"
+	img2.ImgUrl = "gambar2.jpg"
 	img2.AttachmentsId = "227"
 	final := []TopicContentApp{paragraph1, openSell, paragraph2, img1, closeSell, img2}
 

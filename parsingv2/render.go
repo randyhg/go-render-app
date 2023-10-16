@@ -27,8 +27,7 @@ type TopicContentApp struct {
 }
 
 func (a *TopicContentApp) ToJson() string {
-	// _j, _ := json.Marshal(a)
-	_j, _ := json.MarshalIndent(a, "", "    ")
+	_j, _ := json.Marshal(a)
 	return string(_j)
 }
 
@@ -78,9 +77,8 @@ func (p *AppParser) NewTopicContentApp(t string, attId string) TopicContentApp {
 // var emojiRegex = regexp.MustCompile(`\[emoji\](\d+)\[/emoji\]`)
 // var doorRegex = regexp.MustCompile(`\[door\](\d+)\[/door\]`)
 // var bookRegex = regexp.MustCompile(`\[book\](\d+)\[/book\]`)
-var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](\d+)\[\/(?:door|book|emoji|sell)\]`)
-
-// buat regex untuk [sell]
+// var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](\d+)\[\/(?:door|book|emoji|sell)\]`)
+var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](.*?)(?:\[\/(?:door|book|emoji|sell)\])?`)
 
 func (p *AppParser) Render(input string) (apps []TopicContentApp) {
 	doc, err := html.Parse(strings.NewReader(input))
@@ -113,40 +111,36 @@ func (p *AppParser) Render(input string) (apps []TopicContentApp) {
 					text = c.Data
 					if !tagRegex.MatchString(text) {
 						// If there are no tags, add the entire text node
-						if strings.Contains(text, "[sell]") {
-							// openBracket := strings.Index(text, "[")
-							prefix := text[:6]
-							suffix := text[6:]
-							if strings.Contains(suffix, "[/sell]") {
-								suffix = strings.ReplaceAll(suffix, "[/sell]", "")
-								suffix2 := "[/sell]"
-								slice1 := []string{prefix, suffix, suffix2}
-								for _, i := range slice1 {
-									contentApps = p.parseParagraph(i, contentApps)
-								}
-							} else {
-								slice1 := []string{prefix, suffix}
-								for _, i := range slice1 {
-									contentApps = p.parseParagraph(i, contentApps)
-								}
-							}
-						} else {
-							contentApps = p.parseParagraph(text, contentApps)
-						}
+						contentApps = p.parseParagraph(text, contentApps)
 					} else {
-						locs := tagRegex.FindAllStringIndex(text, -1)
-						fmt.Printf("locs is %v\n", locs)
-						start := 0
-						for _, loc := range locs {
-							if loc[0] > start {
-								// Add text node
-								contentApps = p.parseParagraph(text[start:loc[0]], contentApps)
+						prefix := text[:6]
+						suffix := text[6:]
+						if strings.Contains(suffix, "[/sell]") { // kalau tag [sell] langsung ditutup didalam tag p parent
+							suffix = strings.ReplaceAll(suffix, "[/sell]", "")
+							suffix2 := "[/sell]"
+							slice1 := []string{prefix, suffix, suffix2}
+							for _, i := range slice1 {
+								contentApps = p.parseParagraph(i, contentApps)
 							}
-							tags := text[loc[0]:loc[1]]
-							fmt.Printf("from paragraph and tags is %v\n", tags)
-							contentApps = p.parseCustomTags(tags, contentApps)
-							start = loc[1]
+						} else { // kalau tag sell ditutup diluar tag p parent
+							slice1 := []string{prefix, suffix}
+							for _, i := range slice1 {
+								contentApps = p.parseParagraph(i, contentApps)
+							}
 						}
+						// locs := tagRegex.FindAllStringIndex(text, -1)
+						// fmt.Printf("locs is %v\n", locs)
+						// start := 0
+						// for _, loc := range locs {
+						// 	if loc[0] > start {
+						// 		// Add text node
+						// 		contentApps = p.parseParagraph(text[start:loc[0]], contentApps)
+						// 	}
+						// 	tags := text[loc[0]:loc[1]]
+						// 	fmt.Printf("from paragraph and tags is %v\n", tags)
+						// 	contentApps = p.parseCustomTags(tags, contentApps)
+						// 	start = loc[1]
+						// }
 					}
 				}
 			}
@@ -175,6 +169,7 @@ func (p *AppParser) parseCustomTags(content string, contentApps []TopicContentAp
 		openSell.IsSell = "1"
 		openSell.Text = "[sell]"
 		openSell.IsCensored = "1"
+		contentApps = append(contentApps, openSell)
 		p.IsSell = true
 		return contentApps
 	}
@@ -184,6 +179,7 @@ func (p *AppParser) parseCustomTags(content string, contentApps []TopicContentAp
 		closeSell.IsSell = "1"
 		closeSell.Text = "[/sell]"
 		closeSell.IsCensored = "1"
+		contentApps = append(contentApps, closeSell)
 		p.IsSell = false
 		return contentApps
 	}
