@@ -77,7 +77,8 @@ func (p *AppParser) NewTopicContentApp(t string, attId string) TopicContentApp {
 // var emojiRegex = regexp.MustCompile(`\[emoji\](\d+)\[/emoji\]`)
 // var doorRegex = regexp.MustCompile(`\[door\](\d+)\[/door\]`)
 // var bookRegex = regexp.MustCompile(`\[book\](\d+)\[/book\]`)
-// var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](\d+)\[\/(?:door|book|emoji|sell)\]`)
+// var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](\d+)\[\/(?:door|book|emoji|sell)\]`) // tidak bisa membaca kalau penutup berada diluar parent
+// var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji|sell))\](.*?)(?:\[\/(?:door|book|emoji|sell)\])?`) // bisa membaca kalau penutup berada diluar parent
 var tagRegex = regexp.MustCompile(`\[(?:(door|book|emoji))\](\d+)\[\/(?:door|book|emoji)\]`)
 var sellTagRegex = regexp.MustCompile(`\[(?:(sell))\](.*?)(?:\[\/(?:sell)\])?`)
 
@@ -126,7 +127,7 @@ func (p *AppParser) Render(input string) (apps []TopicContentApp) {
 								contentApps = p.parseParagraph(text[start:loc[0]], contentApps)
 							}
 							tags := text[loc[0]:loc[1]]
-							// fmt.Printf("from paragraph and tags is %v\n", tags)
+							fmt.Printf("from paragraph and tags is %v\n", tags)
 							contentApps = p.parseCustomTags(tags, contentApps)
 							start = loc[1]
 						}
